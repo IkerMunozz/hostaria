@@ -1,0 +1,1800 @@
+﻿<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hostara — La IA que llena tu hotel en Toledo</title>
+<meta name="description" content="Automatiza WhatsApp, cierra reservas 24/7 y deja que la IA trabaje mientras tú duermes. El chatbot inteligente para hoteles de Toledo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,200;0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --gold: #C8A96B;
+  --gold-bright: #D4B87A;
+  --gold-dim: #A08850;
+  --electric: #00D4FF;
+  --electric-dim: #0077B6;
+  --bg: #060B16;
+  --bg2: #0A1020;
+  --bg3: #0E1628;
+  --bg4: #121C34;
+  --surface: #16203A;
+  --surface2: #1A2542;
+  --text: #E8EEFF;
+  --text-dim: #7B8DB5;
+  --text-dimmer: #4A5A7A;
+  --border: rgba(255,255,255,0.06);
+  --border-gold: rgba(200,169,107,0.2);
+  --green: #25D366;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 16px; }
+
+body {
+ background: var(--bg);
+ color: var(--text);
+ font-family: var(--font-body);
+ font-weight: 300;
+ line-height: 1.7;
+ overflow-x: hidden;
+ -webkit-font-smoothing: antialiased;
+}
+
+/* ── NOISE GRAIN OVERLAY ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.5;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--electric-dim); border-radius: 3px; }
+
+/* ── SELECTION ── */
+::selection { background: rgba(0,212,255,0.2); color: var(--text); }
+
+/* ── TYPOGRAPHY ── */
+.display {
+ font-family: var(--font-display);
+ font-weight: 300;
+ line-height: 1.0;
+ letter-spacing: -0.01em;
+}
+.display-xl { font-size: clamp(3.5rem, 8vw, 7.5rem); }
+.display-lg { font-size: clamp(2.8rem, 5vw, 5rem); }
+.display-md { font-size: clamp(2rem, 3.5vw, 3.5rem); }
+.display-sm { font-size: clamp(1.6rem, 2.5vw, 2.5rem); }
+
+.label {
+ font-family: var(--font-body);
+ font-size: 0.688rem;
+ font-weight: 500;
+ letter-spacing: 0.18em;
+ text-transform: uppercase;
+}
+
+/* ── LAYOUT ── */
+.container { max-width: 1320px; margin: 0 auto; padding: 0 clamp(1.5rem, 5vw, 5rem); }
+section { padding: clamp(4rem, 10vw, 10rem) 0; }
+
+/* ── NAV ── */
+nav {
+ position: fixed;
+ top: 0; left: 0; right: 0;
+ z-index: 100;
+ padding: 1.25rem 0;
+ transition: background 0.5s, border-color 0.5s;
+ border-bottom: 1px solid transparent;
+}
+nav.scrolled {
+  background: rgba(6,11,22,0.85);
+  backdrop-filter: blur(24px);
+  border-color: var(--border);
+}
+.nav-inner {
+ display: flex;
+ align-items: center;
+ justify-content: space-between;
+ max-width: 1320px;
+ margin: 0 auto;
+ padding: 0 clamp(1.5rem, 5vw, 5rem);
+}
+.nav-logo {
+ font-family: var(--font-display);
+ font-size: 1.5rem;
+ font-weight: 600;
+ letter-spacing: 0.05em;
+ color: var(--gold-bright);
+ text-decoration: none;
+}
+.nav-logo span { color: var(--text-dim); font-weight: 300; }
+.nav-links { display: flex; align-items: center; gap: 2.5rem; }
+.nav-links a {
+ font-size: 0.75rem;
+ font-weight: 500;
+ letter-spacing: 0.12em;
+ text-transform: uppercase;
+ color: var(--text-dim);
+ text-decoration: none;
+ transition: color 0.3s;
+}
+.nav-links a:hover { color: var(--gold-bright); }
+.btn-nav {
+  background: rgba(200,169,107,0.2);
+  color: var(--gold-bright);
+  padding: 0.625rem 1.5rem;
+  font-size: 0.688rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: all 0.3s;
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+  border: 1px solid rgba(200,169,107,0.3);
+}
+.btn-nav:hover {
+  background: rgba(200,169,107,0.35);
+  border-color: rgba(200,169,107,0.5);
+  box-shadow: 0 0 30px rgba(200,169,107,0.2);
+  transform: translateY(-1px);
+}
+.nav-mobile-btn { display: none; background: none; border: none; color: var(--gold); cursor: pointer; font-size: 1.5rem; }
+
+/* ── HERO ── */
+#hero {
+ min-height: 100vh;
+ display: flex;
+ align-items: center;
+ padding-top: 5rem;
+ position: relative;
+ overflow: hidden;
+}
+
+/* Animated grid background */
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+  linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%);
+  animation: gridPulse 8s ease-in-out infinite;
+}
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* Radial glow center */
+.hero-glow {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 800px; height: 600px;
+  background: radial-gradient(ellipse, rgba(0,212,255,0.1) 0%, rgba(200,169,107,0.04) 40%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Orbs */
+.orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  animation: orbFloat 12s ease-in-out infinite;
+}
+.orb-1 {
+  width: 400px; height: 400px;
+  background: rgba(0,212,255,0.08);
+  top: -100px; right: 10%;
+  animation-delay: 0s;
+}
+.orb-2 {
+  width: 300px; height: 300px;
+  background: rgba(200,169,107,0.06);
+  bottom: 10%; left: -5%;
+  animation-delay: -4s;
+}
+.orb-3 {
+  width: 200px; height: 200px;
+  background: rgba(0,212,255,0.04);
+  top: 40%; right: 5%;
+  animation-delay: -8s;
+}
+@keyframes orbFloat {
+ 0%, 100% { transform: translateY(0px) scale(1); }
+ 50% { transform: translateY(-30px) scale(1.05); }
+}
+
+.hero-inner {
+ position: relative;
+ z-index: 2;
+ display: grid;
+ grid-template-columns: 1fr 1fr;
+ gap: 4rem;
+ align-items: center;
+ width: 100%;
+ max-width: 1320px;
+ margin: 0 auto;
+ padding: 0 clamp(1.5rem, 5vw, 5rem);
+}
+
+.hero-badge {
+ display: inline-flex;
+ align-items: center;
+ gap: 0.5rem;
+ border: 1px solid var(--border-gold);
+ background: rgba(200,169,110,0.06);
+ padding: 0.4rem 1rem;
+ margin-bottom: 2rem;
+ backdrop-filter: blur(10px);
+}
+.badge-dot {
+ width: 6px; height: 6px;
+ border-radius: 50%;
+ background: var(--green);
+ box-shadow: 0 0 8px var(--green);
+ animation: badgePulse 2s ease-in-out infinite;
+}
+@keyframes badgePulse {
+ 0%, 100% { box-shadow: 0 0 4px var(--green); }
+ 50% { box-shadow: 0 0 12px var(--green), 0 0 20px rgba(37,211,102,0.3); }
+}
+
+.hero-headline { margin-bottom: 1.5rem; }
+.hero-headline em {
+ font-style: italic;
+ color: var(--gold-bright);
+ display: block;
+}
+
+.hero-sub {
+ color: var(--text-dim);
+ font-size: 1.125rem;
+ max-width: 28rem;
+ margin-bottom: 2.5rem;
+ line-height: 1.8;
+}
+
+.hero-ctas { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 3rem; }
+
+.btn-primary {
+ display: inline-flex;
+ align-items: center;
+ gap: 0.5rem;
+ background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+ color: #0D0A00;
+ padding: 1rem 2rem;
+ font-size: 0.75rem;
+ font-weight: 600;
+ letter-spacing: 0.15em;
+ text-transform: uppercase;
+ text-decoration: none;
+ position: relative;
+ transition: all 0.3s;
+ clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+}
+.btn-primary::after {
+ content: '';
+ position: absolute;
+ inset: -2px;
+ background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+ z-index: -1;
+ filter: blur(12px);
+ opacity: 0;
+ transition: opacity 0.3s;
+ clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 20px 40px rgba(200,169,110,0.3); }
+.btn-primary:hover::after { opacity: 1; }
+
+.btn-ghost {
+ display: inline-flex;
+ align-items: center;
+ gap: 0.5rem;
+ border: 1px solid var(--border);
+ color: var(--text-dim);
+ padding: 1rem 2rem;
+ font-size: 0.75rem;
+ font-weight: 500;
+ letter-spacing: 0.12em;
+ text-transform: uppercase;
+ text-decoration: none;
+ transition: all 0.3s;
+ background: rgba(255,255,255,0.02);
+ clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+}
+.btn-ghost:hover { border-color: var(--border-gold); color: var(--gold-bright); background: rgba(200,169,110,0.05); }
+
+.hero-stats { display: flex; gap: 2rem; }
+.hero-stat { }
+.hero-stat-num {
+ font-family: var(--font-display);
+ font-size: 2rem;
+ font-weight: 600;
+ color: var(--gold-bright);
+ line-height: 1;
+}
+.hero-stat-label { font-size: 0.688rem; color: var(--text-dimmer); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.25rem; }
+
+/* WHATSAPP DEMO */
+.wa-demo {
+  background: rgba(10,16,32,0.8);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,212,255,0.04);
+  position: relative;
+}
+.wa-demo::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0,212,255,0.3), transparent);
+}
+.wa-header {
+  background: rgba(7,94,84,0.9);
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.wa-avatar {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+.wa-hotel-name { font-size: 0.875rem; font-weight: 600; color: #fff; }
+.wa-status { font-size: 0.688rem; color: rgba(255,255,255,0.7); }
+.wa-body { padding: 1.25rem; background: #0B1423; min-height: 280px; display: flex; flex-direction: column; gap: 0.75rem; }
+.wa-msg {
+  max-width: 80%;
+  padding: 0.6rem 0.875rem;
+  border-radius: 10px;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.4s, transform 0.4s;
+}
+.wa-msg.show { opacity: 1; transform: translateY(0); }
+.wa-msg.incoming {
+  background: rgba(255,255,255,0.08);
+  align-self: flex-start;
+  border-bottom-left-radius: 3px;
+  color: var(--text);
+}
+.wa-msg.outgoing {
+  background: rgba(0,212,255,0.1);
+  border: 1px solid rgba(0,212,255,0.15);
+  align-self: flex-end;
+  border-bottom-right-radius: 3px;
+  color: var(--text);
+}
+.wa-msg .time { font-size: 0.6rem; opacity: 0.5; margin-top: 0.25rem; text-align: right; }
+.wa-ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.6rem;
+  color: var(--electric);
+  opacity: 0.9;
+  margin-bottom: 0.2rem;
+}
+.wa-typing {
+  display: flex;
+  gap: 4px;
+  padding: 0.6rem 0.875rem;
+  background: rgba(255,255,255,0.08);
+  border-radius: 10px;
+  width: fit-content;
+  align-self: flex-start;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.wa-typing.show { opacity: 1; }
+.wa-typing span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  animation: typingBounce 1.2s infinite;
+}
+.wa-typing span:nth-child(2) { animation-delay: 0.2s; }
+.wa-typing span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typingBounce {
+  0%, 60%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-6px); }
+}
+.wa-booked {
+  background: rgba(200,169,107,0.1);
+  border: 1px solid var(--border-gold);
+  border-radius: 10px;
+  padding: 0.75rem;
+  margin-top: 0.25rem;
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.4s, transform 0.4s;
+  transform: scale(0.97);
+}
+.wa-booked.show { opacity: 1; transform: scale(1); }
+.wa-booked-title { color: var(--gold); font-weight: 600; margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.4rem; }
+
+/* ── TICKER ── */
+.ticker-wrap {
+ background: var(--bg2);
+ border-top: 1px solid var(--border);
+ border-bottom: 1px solid var(--border);
+ padding: 1rem 0;
+ overflow: hidden;
+}
+.ticker-inner { display: flex; gap: 4rem; animation: ticker 30s linear infinite; white-space: nowrap; }
+.ticker-item { display: flex; align-items: center; gap: 0.75rem; }
+.ticker-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--gold); }
+.ticker-text { font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-dimmer); font-weight: 500; }
+@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* ── SECTIONS COMMON ── */
+.section-label {
+ display: inline-flex;
+ align-items: center;
+ gap: 0.75rem;
+ margin-bottom: 1.5rem;
+}
+.section-label::before {
+ content: '';
+ width: 24px;
+ height: 1px;
+ background: var(--gold);
+}
+.section-label span { font-size: 0.688rem; font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); }
+
+/* ── PAIN SECTION ── */
+#pain { background: var(--bg2); }
+.pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); margin-top: 4rem; }
+.pain-card {
+ background: var(--bg2);
+ padding: 3rem 2.5rem;
+ position: relative;
+ overflow: hidden;
+ transition: background 0.4s;
+}
+.pain-card:hover { background: var(--bg3); }
+.pain-card::before {
+ content: '';
+ position: absolute;
+ top: 0; left: 0; right: 0;
+ height: 2px;
+ background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+ opacity: 0;
+ transition: opacity 0.4s;
+}
+.pain-card:hover::before { opacity: 1; }
+.pain-num {
+ font-family: var(--font-display);
+ font-size: 4rem;
+ font-weight: 300;
+ color: rgba(200,169,110,0.12);
+ line-height: 1;
+ margin-bottom: 1.5rem;
+}
+.pain-icon { font-size: 1.5rem; margin-bottom: 1.25rem; }
+.pain-title { font-family: var(--font-display); font-size: 1.6rem; font-weight: 600; margin-bottom: 1rem; }
+.pain-text { color: var(--text-dim); font-size: 0.9375rem; line-height: 1.8; }
+
+/* ── SOLUTION SECTION ── */
+.sol-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+.sol-features { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 3rem; }
+.sol-feat {
+ display: flex;
+ gap: 1.25rem;
+ align-items: flex-start;
+ padding: 1.5rem;
+ border: 1px solid var(--border);
+ background: rgba(255,255,255,0.01);
+ transition: all 0.3s;
+ cursor: default;
+}
+.sol-feat:hover {
+ border-color: var(--border-gold);
+ background: rgba(200,169,110,0.04);
+ transform: translateX(4px);
+}
+.sol-feat-icon {
+ width: 42px; height: 42px;
+ flex-shrink: 0;
+ border: 1px solid var(--border-gold);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 1.1rem;
+ background: rgba(200,169,110,0.06);
+}
+.sol-feat-title { font-weight: 500; margin-bottom: 0.25rem; font-size: 0.9375rem; }
+.sol-feat-text { font-size: 0.875rem; color: var(--text-dim); line-height: 1.6; }
+
+/* Big phone mockup with WhatsApp */
+.phone-mockup {
+  position: relative;
+  max-width: 340px;
+  margin: 0 auto;
+}
+.phone-frame {
+  background: var(--surface);
+  border: 2px solid rgba(255,255,255,0.06);
+  border-radius: 40px;
+  padding: 1rem;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(0,212,255,0.05);
+  position: relative;
+  overflow: hidden;
+}
+.phone-frame::before {
+ content: '';
+ position: absolute;
+ top: 0; left: 50%; transform: translateX(-50%);
+ width: 100px; height: 28px;
+ background: #000;
+ border-radius: 0 0 20px 20px;
+ z-index: 2;
+}
+.phone-screen {
+ background: #ECE5DD;
+ border-radius: 28px;
+ overflow: hidden;
+ min-height: 540px;
+}
+.wa-full-header {
+ background: #075E54;
+ padding: 2rem 1rem 0.75rem;
+ display: flex;
+ align-items: center;
+ gap: 0.75rem;
+}
+.wa-full-avatar {
+ width: 36px; height: 36px;
+ border-radius: 50%;
+ background: linear-gradient(135deg, var(--gold-dim), var(--gold));
+ display: flex; align-items: center; justify-content: center;
+ font-size: 1rem; flex-shrink: 0;
+}
+.wa-full-name { font-size: 0.875rem; font-weight: 700; color: #fff; }
+.wa-full-online { font-size: 0.6875rem; color: rgba(255,255,255,0.7); }
+.wa-full-body {
+ padding: 0.75rem;
+ background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cpath d='M30 0L60 30L30 60L0 30Z' fill='rgba(0,0,0,0.015)'/%3E%3C/svg%3E");
+ min-height: 400px;
+ display: flex;
+ flex-direction: column;
+ gap: 0.5rem;
+}
+.msg-bubble {
+ max-width: 85%;
+ padding: 0.5rem 0.75rem;
+ border-radius: 8px;
+ font-size: 0.75rem;
+ line-height: 1.5;
+ color: #000;
+ position: relative;
+ opacity: 0;
+ transform: translateY(6px);
+ transition: all 0.35s;
+}
+.msg-bubble.show { opacity: 1; transform: translateY(0); }
+.msg-bubble.in {
+ background: #fff;
+ align-self: flex-start;
+ border-top-left-radius: 2px;
+}
+.msg-bubble.out {
+ background: #DCF8C6;
+ align-self: flex-end;
+ border-top-right-radius: 2px;
+}
+.msg-time { font-size: 0.55rem; color: rgba(0,0,0,0.4); text-align: right; margin-top: 2px; }
+.msg-typing-b {
+ background: #fff;
+ align-self: flex-start;
+ padding: 0.5rem 0.875rem;
+ border-radius: 8px;
+ border-top-left-radius: 2px;
+ display: flex;
+ gap: 4px;
+ width: fit-content;
+ opacity: 0;
+ transition: opacity 0.3s;
+}
+.msg-typing-b.show { opacity: 1; }
+.msg-typing-b span {
+ width: 5px; height: 5px;
+ border-radius: 50%;
+ background: rgba(0,0,0,0.3);
+ animation: typingBounce 1.2s infinite;
+}
+.msg-typing-b span:nth-child(2) { animation-delay: 0.2s; }
+.msg-typing-b span:nth-child(3) { animation-delay: 0.4s; }
+.msg-confirm {
+ background: #E1FFC7;
+ border: 1px solid rgba(37,211,102,0.3);
+ border-radius: 8px;
+ padding: 0.625rem 0.75rem;
+ font-size: 0.688rem;
+ align-self: flex-end;
+ max-width: 85%;
+ color: #000;
+ opacity: 0;
+ transform: scale(0.97);
+ transition: all 0.4s;
+}
+.msg-confirm.show { opacity: 1; transform: scale(1); }
+.msg-confirm-title { font-weight: 700; font-size: 0.75rem; color: #075E54; margin-bottom: 0.25rem; }
+
+/* ── STATS SECTION ── */
+#stats { background: var(--bg3); }
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--border); margin-top: 4rem; }
+.stat-card {
+ background: var(--bg3);
+ padding: 3rem 2rem;
+ text-align: center;
+ position: relative;
+ transition: background 0.3s;
+}
+.stat-card:hover { background: var(--bg4); }
+.stat-num {
+ font-family: var(--font-display);
+ font-size: 3.5rem;
+ font-weight: 600;
+ color: var(--gold-bright);
+ line-height: 1;
+ margin-bottom: 0.75rem;
+}
+.stat-label { font-size: 0.75rem; color: var(--text-dim); letter-spacing: 0.08em; line-height: 1.5; }
+.stat-icon { font-size: 1.5rem; margin-bottom: 1rem; opacity: 0.6; }
+
+/* ── TOLEDO SECTION ── */
+#toledo { background: var(--bg); position: relative; overflow: hidden; }
+.toledo-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(0,212,255,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.toledo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+.toledo-tags { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.5rem; }
+.toledo-tag {
+ border: 1px solid var(--border-gold);
+ background: rgba(200,169,110,0.06);
+ padding: 0.4rem 1rem;
+ font-size: 0.75rem;
+ color: var(--gold);
+ letter-spacing: 0.08em;
+ font-weight: 500;
+}
+.toledo-accent {
+ font-family: var(--font-display);
+ font-size: 1.1rem;
+ font-style: italic;
+ color: var(--text-dim);
+ line-height: 1.8;
+}
+.toledo-highlight { color: var(--gold-bright); }
+
+/* Toledo visual card */
+.toledo-visual {
+ background: var(--bg3);
+ border: 1px solid var(--border);
+ padding: 2.5rem;
+ position: relative;
+}
+.toledo-visual::before {
+ content: '';
+ position: absolute;
+ top: 0; left: 0;
+ width: 60px; height: 60px;
+ border-top: 2px solid var(--gold);
+ border-left: 2px solid var(--gold);
+}
+.toledo-visual::after {
+ content: '';
+ position: absolute;
+ bottom: 0; right: 0;
+ width: 60px; height: 60px;
+ border-bottom: 2px solid var(--gold);
+ border-right: 2px solid var(--gold);
+}
+.toledo-flag { font-size: 2.5rem; margin-bottom: 1.5rem; }
+.toledo-visual h3 { font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; margin-bottom: 0.5rem; }
+.toledo-visual p { color: var(--text-dim); font-size: 0.9375rem; margin-bottom: 2rem; }
+.toledo-metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.toledo-metric { background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 1.25rem; }
+.toledo-metric-num { font-family: var(--font-display); font-size: 2rem; font-weight: 600; color: var(--electric); }
+.toledo-metric-label { font-size: 0.75rem; color: var(--text-dim); margin-top: 0.25rem; }
+
+/* ── HOW IT WORKS ── */
+#how { background: var(--bg2); }
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; margin-top: 4rem; }
+.steps::before {
+ content: '';
+ position: absolute;
+ top: 2rem; left: 12%;
+ right: 12%;
+ height: 1px;
+ background: linear-gradient(90deg, transparent, var(--border-gold), var(--border-gold), transparent);
+}
+.step {
+ padding: 0 2rem;
+ text-align: center;
+ position: relative;
+}
+.step-num {
+ width: 64px; height: 64px;
+ border: 1px solid var(--border-gold);
+ background: var(--bg);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-family: var(--font-display);
+ font-size: 1.25rem;
+ font-weight: 600;
+ color: var(--gold);
+ margin: 0 auto 2rem;
+ position: relative;
+ z-index: 1;
+ transition: all 0.3s;
+}
+.step:hover .step-num {
+ background: rgba(200,169,110,0.1);
+ box-shadow: 0 0 30px rgba(200,169,110,0.2);
+}
+.step-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; margin-bottom: 0.75rem; }
+.step-text { font-size: 0.875rem; color: var(--text-dim); line-height: 1.7; }
+
+/* ── TESTIMONIALS ── */
+#testimonials { background: var(--bg); }
+.testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 4rem; }
+.testi-card {
+ background: var(--bg2);
+ border: 1px solid var(--border);
+ padding: 2.5rem;
+ position: relative;
+ transition: all 0.4s;
+}
+.testi-card:hover { border-color: var(--border-gold); transform: translateY(-4px); }
+.testi-quote {
+ font-family: var(--font-display);
+ font-size: 3rem;
+ line-height: 0;
+ color: var(--gold-dim);
+ position: absolute;
+ top: 1.5rem; left: 2rem;
+}
+.testi-text { font-style: italic; color: var(--text); line-height: 1.8; margin-bottom: 2rem; padding-top: 1.25rem; font-size: 0.9375rem; }
+.testi-author { display: flex; align-items: center; gap: 1rem; }
+.testi-avatar {
+ width: 44px; height: 44px;
+ border-radius: 50%;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ font-size: 1.1rem;
+ flex-shrink: 0;
+}
+.testi-name { font-weight: 500; font-size: 0.875rem; }
+.testi-hotel { font-size: 0.75rem; color: var(--gold); }
+.testi-stars { color: var(--gold); font-size: 0.75rem; margin-bottom: 0.25rem; }
+
+/* ── PLANS ── */
+#planes { background: var(--bg3); }
+.plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 4rem; }
+.plan-card {
+ background: var(--bg2);
+ border: 1px solid var(--border);
+ padding: 2.5rem;
+ display: flex;
+ flex-direction: column;
+ transition: all 0.3s;
+ position: relative;
+}
+.plan-card:hover { border-color: rgba(200,169,110,0.3); }
+.plan-featured {
+ border-color: var(--border-gold);
+ background: linear-gradient(135deg, rgba(200,169,110,0.08) 0%, var(--bg2) 60%);
+}
+.plan-featured::before {
+ content: 'MÁS POPULAR';
+ position: absolute;
+ top: -12px;
+ left: 50%;
+ transform: translateX(-50%);
+ background: var(--gold);
+ color: #0D0A00;
+ font-size: 0.6rem;
+ font-weight: 700;
+ letter-spacing: 0.2em;
+ padding: 0.25rem 1rem;
+ white-space: nowrap;
+ clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+}
+.plan-label { font-size: 0.688rem; color: var(--electric); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.75rem; font-weight: 600; text-shadow: 0 0 20px rgba(0,212,255,0.3); }
+.plan-name { font-family: var(--font-display); font-size: 1.8rem; font-weight: 600; margin-bottom: 0.5rem; }
+.plan-desc { font-size: 0.875rem; color: var(--text-dim); margin-bottom: 2rem; }
+.plan-price {
+ font-family: var(--font-display);
+ font-size: 3rem;
+ font-weight: 600;
+ color: var(--gold-bright);
+ margin-bottom: 0.25rem;
+ line-height: 1;
+}
+.plan-price-label { font-size: 0.75rem; color: var(--text-dimmer); margin-bottom: 2rem; }
+.plan-divider { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 0.875rem; flex: 1; }
+.plan-features li { display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.875rem; color: var(--text-dim); }
+.plan-features li .check { color: var(--gold); font-size: 0.875rem; flex-shrink: 0; margin-top: 0.1rem; }
+.plan-features li .cross { color: var(--text-dimmer); font-size: 0.875rem; flex-shrink: 0; margin-top: 0.1rem; }
+.plan-cta {
+ margin-top: 2rem;
+ display: block;
+ text-align: center;
+ padding: 0.875rem;
+ font-size: 0.75rem;
+ font-weight: 600;
+ letter-spacing: 0.12em;
+ text-transform: uppercase;
+ text-decoration: none;
+ transition: all 0.3s;
+}
+.plan-cta-primary {
+ background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+ color: #0D0A00;
+ clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.plan-cta-primary:hover { box-shadow: 0 10px 30px rgba(200,169,110,0.3); }
+.plan-cta-ghost {
+  border: 1px solid var(--border-gold);
+  color: var(--gold);
+  clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+}
+.plan-cta-ghost:hover { background: rgba(200,169,110,0.06); }
+
+/* ── CTA FINAL ── */
+#cta-final {
+ background: var(--bg);
+ position: relative;
+ overflow: hidden;
+ text-align: center;
+}
+.cta-glow {
+ position: absolute;
+ top: 50%; left: 50%;
+ transform: translate(-50%, -50%);
+ width: 600px; height: 400px;
+ background: radial-gradient(ellipse, rgba(200,169,110,0.08) 0%, transparent 70%);
+ pointer-events: none;
+}
+.cta-urgency {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(239,68,68,0.1);
+  border: 1px solid rgba(239,68,68,0.25);
+  padding: 0.4rem 1rem;
+  margin-bottom: 2rem;
+  color: #FCA5A5;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.cta-urgency .dot { width: 6px; height: 6px; border-radius: 50%; background: #EF4444; animation: badgePulse 2s infinite; }
+.cta-headline { margin-bottom: 1.5rem; }
+.cta-sub { color: var(--text-dim); font-size: 1.125rem; max-width: 36rem; margin: 0 auto 3rem; }
+.cta-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+.cta-note { margin-top: 1.5rem; font-size: 0.75rem; color: var(--text-dimmer); }
+
+/* ── CONTACT ── */
+#contacto { background: var(--bg2); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; }
+.contact-info-title { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; margin-bottom: 0.375rem; }
+.contact-info-val { font-size: 1rem; color: var(--gold-bright); }
+.contact-info-block { margin-bottom: 2rem; }
+.contact-info-label { font-size: 0.688rem; color: var(--text-dimmer); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 0.25rem; }
+.contact-form { display: flex; flex-direction: column; gap: 1.5rem; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.form-group { display: flex; flex-direction: column; gap: 0.5rem; }
+.form-label { font-size: 0.688rem; color: var(--text-dim); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; }
+.form-input {
+  background: rgba(255,255,255,0.03);
+  border: none;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  padding: 0.875rem 0;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  transition: border-color 0.3s;
+  outline: none;
+  width: 100%;
+}
+.form-input:focus { border-color: var(--gold); }
+.form-input option { background: var(--bg2); }
+.form-submit {
+ background: linear-gradient(135deg, var(--gold) 0%, var(--gold-bright) 100%);
+ color: #0D0A00;
+ border: none;
+ padding: 1.125rem 2rem;
+ font-family: var(--font-body);
+ font-size: 0.75rem;
+ font-weight: 700;
+ letter-spacing: 0.15em;
+ text-transform: uppercase;
+ cursor: pointer;
+ transition: all 0.3s;
+ clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+ margin-top: 0.5rem;
+}
+.form-submit:hover { box-shadow: 0 10px 30px rgba(200,169,110,0.3); transform: translateY(-1px); }
+
+/* ── FOOTER ── */
+footer {
+ background: var(--bg);
+ border-top: 1px solid var(--border);
+ padding: 3rem 0;
+}
+.footer-inner {
+ display: flex;
+ justify-content: space-between;
+ align-items: center;
+ flex-wrap: wrap;
+ gap: 1.5rem;
+}
+.footer-logo { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; color: var(--gold-bright); }
+.footer-copy { font-size: 0.688rem; color: var(--text-dimmer); letter-spacing: 0.1em; text-transform: uppercase; }
+.footer-links { display: flex; gap: 2rem; }
+.footer-links a { font-size: 0.688rem; color: var(--text-dimmer); text-decoration: none; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.3s; }
+.footer-links a:hover { color: var(--gold); }
+
+/* ── SCROLL REVEAL ── */
+.reveal {
+ opacity: 0;
+ transform: translateY(24px);
+ transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.active { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── COUNTER ── */
+.count-up { display: inline-block; }
+
+/* ── MOBILE NAV ── */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(6,11,22,0.98);
+  backdrop-filter: blur(20px);
+  z-index: 200;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+ font-family: var(--font-display);
+ font-size: 2rem;
+ color: var(--text);
+ text-decoration: none;
+ font-weight: 300;
+ transition: color 0.3s;
+}
+.mobile-menu a:hover { color: var(--gold-bright); }
+.mobile-close {
+ position: absolute;
+ top: 2rem; right: 2rem;
+ background: none; border: none;
+ color: var(--text-dim);
+ font-size: 1.5rem;
+ cursor: pointer;
+}
+
+/* ── WHATSAPP FLOAT BTN ── */
+.wa-float {
+ position: fixed;
+ bottom: 2rem;
+ right: 2rem;
+ z-index: 50;
+ width: 58px; height: 58px;
+ border-radius: 50%;
+ background: var(--green);
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ box-shadow: 0 4px 20px rgba(37,211,102,0.4);
+ text-decoration: none;
+ transition: transform 0.3s, box-shadow 0.3s;
+ animation: waFloat 3s ease-in-out infinite;
+}
+.wa-float:hover { transform: scale(1.1); box-shadow: 0 8px 30px rgba(37,211,102,0.5); }
+@keyframes waFloat {
+ 0%, 100% { transform: translateY(0); }
+ 50% { transform: translateY(-6px); }
+}
+.wa-float svg { width: 28px; height: 28px; fill: #fff; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+ .hero-inner { grid-template-columns: 1fr; }
+ .sol-grid { grid-template-columns: 1fr; }
+ .toledo-grid { grid-template-columns: 1fr; }
+ .contact-grid { grid-template-columns: 1fr; }
+ .steps { grid-template-columns: 1fr 1fr; }
+ .steps::before { display: none; }
+ .stats-grid { grid-template-columns: 1fr 1fr; }
+ .testi-grid { grid-template-columns: 1fr 1fr; }
+ .plans-grid { grid-template-columns: 1fr; max-width: 480px; margin-left: auto; margin-right: auto; }
+}
+@media (max-width: 768px) {
+ .pain-grid { grid-template-columns: 1fr; }
+ .nav-links { display: none; }
+ .nav-mobile-btn { display: block; }
+ .hero-stats { flex-direction: column; gap: 1rem; }
+ .stats-grid { grid-template-columns: 1fr 1fr; }
+ .testi-grid { grid-template-columns: 1fr; }
+ .steps { grid-template-columns: 1fr; }
+ .form-row { grid-template-columns: 1fr; }
+ .footer-inner { flex-direction: column; text-align: center; }
+}
+@media (max-width: 480px) {
+ .stats-grid { grid-template-columns: 1fr; }
+ .toledo-metrics { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+ <button class="mobile-close" onclick="closeMobileMenu()">✕</button>
+ <a href="#servicios" onclick="closeMobileMenu()">Servicios</a>
+ <a href="#how" onclick="closeMobileMenu()">Protocolo</a>
+ <a href="#planes" onclick="closeMobileMenu()">Planes</a>
+ <a href="#toledo" onclick="closeMobileMenu()">Toledo</a>
+ <a href="#contacto" onclick="closeMobileMenu()">Consultoría</a>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+ <div class="nav-inner">
+ <a href="#" class="nav-logo">Hostara</a>
+ <div class="nav-links">
+ <a href="#servicios">Servicios</a>
+ <a href="#how">Protocolo</a>
+ <a href="#planes">Planes</a>
+ <a href="#toledo">Toledo</a>
+ <a href="#contacto" class="btn-nav">Auditoría Gratis</a>
+ </div>
+ <button class="nav-mobile-btn" onclick="openMobileMenu()">☰</button>
+ </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+ <div class="hero-grid"></div>
+ <div class="hero-glow"></div>
+ <div class="orb orb-1"></div>
+ <div class="orb orb-2"></div>
+ <div class="orb orb-3"></div>
+
+ <div class="hero-inner">
+ <div>
+
+
+ <h1 class="display display-xl hero-headline">
+ Mientras duermes,<br>
+ <em>la IA cierra</em>
+ tus reservas.
+ </h1>
+
+ <p class="hero-sub">
+ Tu hotel pierde reservas cada noche porque WhatsApp no se responde solo. Hostara automatiza todo — reservas, atención, upselling — en segundos, 24h al día, en cualquier idioma.
+ </p>
+
+ <div class="hero-ctas">
+ <a href="#contacto" class="btn-primary">
+ <span>▶</span> Ver demo en vivo
+ </a>
+ <a href="#servicios" class="btn-ghost">
+ Cómo funciona →
+ </a>
+ </div>
+
+ <div class="hero-stats">
+ <div class="hero-stat">
+ <div class="hero-stat-num">0.5s</div>
+ <div class="hero-stat-label">Tiempo de respuesta</div>
+ </div>
+ <div class="hero-stat">
+ <div class="hero-stat-num">+38%</div>
+ <div class="hero-stat-label">Reservas directas</div>
+ </div>
+ <div class="hero-stat">
+ <div class="hero-stat-num">24/7</div>
+ <div class="hero-stat-label">Sin descansos</div>
+ </div>
+ </div>
+ </div>
+
+ <!-- WHATSAPP DEMO CARD -->
+ <div class="wa-demo" id="waDemoHero">
+ <div class="wa-header">
+ <div class="wa-avatar"></div>
+ <div>
+ <div class="wa-hotel-name">Hotel Toledano Boutique</div>
+ <div class="wa-status">● En línea · Respondiendo en segundos</div>
+ </div>
+ </div>
+ <div class="wa-body">
+ <div class="wa-msg incoming" id="hm1">
+ Hola! Quería saber el precio de una habitación doble para este fin de semana, 2 noches.
+ <div class="time">10:42 · Via WhatsApp</div>
+ </div>
+
+ <div class="wa-typing" id="ht1">
+ <span></span><span></span><span></span>
+ </div>
+
+ <div class="wa-msg outgoing" id="hm2">
+ <div class="wa-ai-badge"> Hostara AI</div>
+ ¡Hola! Para el fin de semana (sáb 24 – lun 26), tenemos disponible:<br><br>
+ <strong>Doble Superior:</strong> 189€/noche<br>
+ <strong>Junior Suite:</strong> 249€/noche<br><br>
+ Incluye desayuno buffet. ¿Te interesa alguna de las dos opciones?
+ <div class="time">10:42</div>
+ </div>
+
+ <div class="wa-msg incoming" id="hm3">
+ La doble superior! Somos 2 personas. ¿Cómo reservamos?
+ <div class="time">10:43</div>
+ </div>
+
+ <div class="wa-typing" id="ht2">
+ <span></span><span></span><span></span>
+ </div>
+
+ <div class="wa-booked" id="hm4">
+ <div class="wa-booked-title">Reserva confirmada</div>
+ <div style="font-size:0.75rem;color:var(--text-dim)">
+ <div> Hotel Toledano Boutique, Toledo</div>
+ <div> 24–26 Mayo · 2 noches · 2 personas</div>
+ <div> Total: <strong style="color:var(--gold-bright)">378€</strong></div>
+ <div style="margin-top:0.5rem;font-size:0.7rem;color:var(--electric)">Confirmación enviada a tu email </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+ <div class="ticker-inner" id="ticker">
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">+150 hoteles automatizados</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">WhatsApp Business API Oficial</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">98% satisfacción de clientes</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Respuesta en 0.5 segundos</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Multilingüe: ES · EN · FR · DE · IT · ZH</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">ROI positivo en 45 días</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Integración PMS nativa</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Sin código · Sin complicaciones</span></div>
+ <!-- duplicated -->
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">+150 hoteles automatizados</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">WhatsApp Business API Oficial</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">98% satisfacción de clientes</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Respuesta en 0.5 segundos</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Multilingüe: ES · EN · FR · DE · IT · ZH</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">ROI positivo en 45 días</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Integración PMS nativa</span></div>
+ <div class="ticker-item"><div class="ticker-dot"></div><span class="ticker-text">Sin código · Sin complicaciones</span></div>
+ </div>
+</div>
+
+<!-- PAIN SECTION -->
+<section id="pain">
+ <div class="container">
+ <div class="reveal">
+ <div class="section-label"><span>El problema</span></div>
+ <h2 class="display display-lg" style="max-width:44rem">Tu hotel pierde dinero cada vez que no responde a tiempo.</h2>
+ </div>
+
+ <div class="pain-grid">
+ <div class="pain-card reveal reveal-delay-1">
+ <div class="pain-num">01</div>
+ <div class="pain-icon"></div>
+ <div class="pain-title">Reservas que se van a la competencia</div>
+ <p class="pain-text">Un turista escribe a las 11pm preguntando por disponibilidad. Tu equipo duerme. El cliente reserva en el hotel de al lado en 2 minutos. Esa reserva ya no vuelve.</p>
+ </div>
+ <div class="pain-card reveal reveal-delay-2">
+ <div class="pain-num">02</div>
+ <div class="pain-icon"></div>
+ <div class="pain-title">Recepción saturada de preguntas repetitivas</div>
+ <p class="pain-text">¿Hay parking? ¿Admitís mascotas? ¿A qué hora es el check-in? Preguntas que tu equipo responde 30 veces al día, robándoles tiempo para lo que realmente importa.</p>
+ </div>
+ <div class="pain-card reveal reveal-delay-3">
+ <div class="pain-num">03</div>
+ <div class="pain-icon"></div>
+ <div class="pain-title">Dependencia total de Booking y Expedia</div>
+ <p class="pain-text">Pagas hasta un 20% de comisión en cada reserva porque no tienes un canal de venta directa funcionando 24/7. Estás financiando a tu intermediario con cada noche vendida.</p>
+ </div>
+ </div>
+ </div>
+</section>
+
+<!-- SOLUTION SECTION -->
+<section id="servicios" style="background:var(--bg);">
+ <div class="container">
+ <div class="sol-grid">
+ <!-- Phone mockup left -->
+ <div class="reveal">
+ <div class="phone-mockup">
+ <div class="phone-frame">
+ <div class="phone-screen">
+ <div class="wa-full-header">
+ <div class="wa-full-avatar"></div>
+ <div>
+ <div class="wa-full-name">Hotel Sol Toledo</div>
+ <div class="wa-full-online">Hostara AI · En línea ahora</div>
+ </div>
+ </div>
+ <div class="wa-full-body" id="phoneChat">
+ <div class="msg-bubble in" id="pm1">
+ Good morning! Do you have rooms available for next weekend? 2 adults 
+ <div class="msg-time">09:15</div>
+ </div>
+ <div class="msg-typing-b" id="pt1"><span></span><span></span><span></span></div>
+ <div class="msg-bubble out" id="pm2">
+ Good morning! Yes, we have availability!<br><br>
+ <b>Double Deluxe</b> – 179€/night<br>
+ <b>Suite Toledo</b> – 239€/night<br><br>
+ Both include breakfast & free parking. Which one interests you?
+ <div class="msg-time">09:15</div>
+ </div>
+ <div class="msg-bubble in" id="pm3">
+ The Double Deluxe please! Can I book now?
+ <div class="msg-time">09:16</div>
+ </div>
+ <div class="msg-typing-b" id="pt2"><span></span><span></span><span></span></div>
+ <div class="msg-confirm" id="pm4">
+ <div class="msg-confirm-title">Booking Confirmed!</div>
+ Sat 31 May – Sun 1 Jun<br>
+ Double Deluxe · 2 guests<br>
+ Total: <strong>179€</strong> · Deposit 20% charged<br>
+ <div style="margin-top:0.4rem;font-size:0.6rem;color:#075E54">Confirmation sent to your email </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+
+ <!-- Right: features -->
+ <div>
+ <div class="section-label reveal"><span>La solución</span></div>
+ <h2 class="display display-lg reveal" style="margin-bottom:1.25rem">
+ Un agente de IA que vende<br>mientras tú descansan.
+ </h2>
+ <p class="reveal" style="color:var(--text-dim);font-size:1.0625rem;max-width:26rem;line-height:1.8">
+ Hostara convierte tu WhatsApp en un comercial que nunca duerme, nunca se cansa y habla todos los idiomas de tus clientes.
+ </p>
+
+ <div class="sol-features">
+ <div class="sol-feat reveal reveal-delay-1">
+ <div class="sol-feat-icon"></div>
+ <div>
+ <div class="sol-feat-title">Reservas automáticas 24/7</div>
+ <div class="sol-feat-text">Cierra reservas directas en WhatsApp sin intervención humana. Pago, confirmación y registro automáticos.</div>
+ </div>
+ </div>
+ <div class="sol-feat reveal reveal-delay-2">
+ <div class="sol-feat-icon"></div>
+ <div>
+ <div class="sol-feat-title">Atención multilingüe con IA</div>
+ <div class="sol-feat-text">Inglés, francés, alemán, italiano, chino... Responde al turista en su idioma, siempre en tono de lujo.</div>
+ </div>
+ </div>
+ <div class="sol-feat reveal reveal-delay-3">
+ <div class="sol-feat-icon"></div>
+ <div>
+ <div class="sol-feat-title">Upselling inteligente</div>
+ <div class="sol-feat-text">Propone upgrades, desayunos, spa y actividades en el momento justo. Más ingresos sin esfuerzo.</div>
+ </div>
+ </div>
+ <div class="sol-feat reveal reveal-delay-4">
+ <div class="sol-feat-icon"></div>
+ <div>
+ <div class="sol-feat-title">Integración con tu PMS</div>
+ <div class="sol-feat-text">Se conecta con Cloudbeds, Mews, Opera, Beds24 y más. Disponibilidad en tiempo real, cero overbooking.</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+</section>
+
+<!-- STATS -->
+<section id="stats">
+ <div class="container">
+ <div class="reveal" style="text-align:center;max-width:36rem;margin:0 auto">
+ <div class="section-label" style="justify-content:center"><span>Impacto real</span></div>
+ <h2 class="display display-md">Los números que cambian un negocio.</h2>
+ </div>
+ <div class="stats-grid">
+ <div class="stat-card reveal reveal-delay-1">
+ <div class="stat-icon"></div>
+ <div class="stat-num"><span class="count-up" data-target="0.5" data-decimals="1" data-suffix="s">0s</span></div>
+ <div class="stat-label">Tiempo medio de<br>respuesta al cliente</div>
+ </div>
+ <div class="stat-card reveal reveal-delay-2">
+ <div class="stat-icon"></div>
+ <div class="stat-num"><span class="count-up" data-target="38" data-suffix="%">0%</span></div>
+ <div class="stat-label">Incremento en<br>reservas directas</div>
+ </div>
+ <div class="stat-card reveal reveal-delay-3">
+ <div class="stat-icon"></div>
+ <div class="stat-num"><span class="count-up" data-target="12" data-prefix="+" data-suffix="k€">0k€</span></div>
+ <div class="stat-label">Ahorro en comisiones<br>OTA anuales</div>
+ </div>
+ <div class="stat-card reveal reveal-delay-4">
+ <div class="stat-icon"></div>
+ <div class="stat-num"><span class="count-up" data-target="380" data-suffix="%">0%</span></div>
+ <div class="stat-label">ROI promedio<br>en 12 meses</div>
+ </div>
+ </div>
+ </div>
+</section>
+
+<!-- TOLEDO SECTION -->
+<section id="toledo">
+ <div class="toledo-bg"></div>
+ <div class="container">
+ <div class="toledo-grid">
+ <div>
+ <div class="section-label reveal"><span>Toledo, la joya del turismo</span></div>
+ <h2 class="display display-lg reveal" style="margin-bottom:1.25rem">
+ Toledo recibe<br>millones de turistas.<br>
+ <span style="color:var(--gold-bright);font-style:italic">¿Tu hotel los capta?</span>
+ </h2>
+ <p class="toledo-accent reveal" style="margin-bottom:1.5rem">
+ La Ciudad Imperial recibe <span class="toledo-highlight">+3 millones de visitas al año</span>. La mayoría de turistas internacionales buscan alojamiento en WhatsApp o Google, de noche, en su idioma. Si no respondes en segundos, pierdes la reserva.
+ </p>
+ <p class="reveal" style="color:var(--text-dim);font-size:0.9375rem;line-height:1.8;margin-bottom:2rem">
+ La competencia en Toledo crece. Los hoteles que han adoptado IA están captando reservas que antes se perdían. Cada día sin automatización es un día regalando clientes.
+ </p>
+ <div class="toledo-tags reveal">
+ <span class="toledo-tag">Hoteles Boutique</span>
+ <span class="toledo-tag">Casas Rurales Premium</span>
+ <span class="toledo-tag">Turismo Internacional</span>
+ <span class="toledo-tag">City Center</span>
+ <span class="toledo-tag">Turistas Europeos</span>
+ <span class="toledo-tag">Grupos y Agencias</span>
+ </div>
+ </div>
+
+ <div class="toledo-visual reveal">
+ <div class="toledo-flag"></div>
+ <h3>Toledo en cifras</h3>
+ <p>Por qué tu hotel necesita estar automatizado ya</p>
+ <div class="toledo-metrics">
+ <div class="toledo-metric">
+ <div class="toledo-metric-num">3.2M</div>
+ <div class="toledo-metric-label">Turistas anuales en Toledo</div>
+ </div>
+ <div class="toledo-metric">
+ <div class="toledo-metric-num">68%</div>
+ <div class="toledo-metric-label">Son turistas internacionales</div>
+ </div>
+ <div class="toledo-metric">
+ <div class="toledo-metric-num">11pm</div>
+ <div class="toledo-metric-label">Hora pico de consultas en WhatsApp</div>
+ </div>
+ <div class="toledo-metric">
+ <div class="toledo-metric-num">8min</div>
+ <div class="toledo-metric-label">Tiempo antes de cambiar de hotel</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+ <div class="container">
+ <div class="reveal" style="text-align:center;max-width:40rem;margin:0 auto">
+ <div class="section-label" style="justify-content:center"><span>Protocolo Hostara</span></div>
+ <h2 class="display display-md">Tu IA lista en pocos días.<br>Sin complicaciones.</h2>
+ </div>
+ <div class="steps">
+ <div class="step reveal reveal-delay-1">
+ <div class="step-num">01</div>
+ <div class="step-title">Auditoría gratuita</div>
+ <p class="step-text">Analizamos tu hotel, flujos actuales y calculamos cuánto estás perdiendo cada mes por falta de automatización.</p>
+ </div>
+ <div class="step reveal reveal-delay-2">
+ <div class="step-num">02</div>
+ <div class="step-title">Configuración IA</div>
+ <p class="step-text">Entrenamos el agente con tu tono, tarifas, políticas, idiomas y servicios. Personalizado 100% para tu hotel.</p>
+ </div>
+ <div class="step reveal reveal-delay-3">
+ <div class="step-num">03</div>
+ <div class="step-title">Integración PMS</div>
+ <p class="step-text">Conectamos WhatsApp con tu sistema de gestión. Disponibilidad en tiempo real, confirmaciones automáticas.</p>
+ </div>
+ <div class="step reveal reveal-delay-4">
+ <div class="step-num">04</div>
+ <div class="step-title">Lanzamiento</div>
+ <p class="step-text">Activamos y monitorizamos. Recibes reportes semanales de conversaciones, reservas cerradas y revenue generado.</p>
+ </div>
+ </div>
+ </div>
+</section>
+
+
+<!-- PLANS -->
+<section id="planes">
+ <div class="container">
+ <div class="reveal" style="text-align:center;max-width:36rem;margin:0 auto">
+ <div class="section-label" style="justify-content:center"><span>Planes y precios</span></div>
+ <h2 class="display display-md">Claridad total.<br>Sin sorpresas.</h2>
+ <p style="color:var(--text-dim);margin-top:1rem;font-size:0.9375rem">Empieza gratis. Escala cuando veas los resultados.</p>
+ </div>
+ <div class="plans-grid">
+  <div class="plan-card reveal reveal-delay-1">
+  <div class="plan-label">STARTER</div>
+  <div class="plan-name">Auditoría Gratuita</div>
+  <p class="plan-desc">Analizamos tu hotel y te mostramos el chatbot en acción.</p>
+  <div class="plan-price">0€</div>
+  <div class="plan-price-label">sin compromiso</div>
+  <hr class="plan-divider">
+  <ul class="plan-features">
+  <li><span class="check">✓</span> Análisis de tu hotel y flujos</li>
+  <li><span class="check">✓</span> Demo del chatbot en vivo</li>
+  <li><span class="check">✓</span> Ejemplo con preguntas reales de tus huéspedes</li>
+  <li><span class="check">✓</span> Informe de reservas que estás perdiendo</li>
+  <li><span class="cross">–</span> Chatbot activo en tu hotel</li>
+  <li><span class="cross">–</span> Integración WhatsApp API</li>
+  </ul>
+  <a href="#contacto" class="plan-cta plan-cta-ghost">SOLICITAR AUDITORÍA</a>
+  </div>
+
+  <div class="plan-card plan-featured reveal reveal-delay-2">
+  <div class="plan-label">MÁS POPULAR</div>
+  <div class="plan-name">Chatbot IA</div>
+  <p class="plan-desc">Un asistente inteligente que responde a tus huéspedes 24/7 al instante.</p>
+  <div class="plan-price">49€</div>
+  <div class="plan-price-label">/mes · sin permanencia</div>
+  <hr class="plan-divider">
+  <ul class="plan-features">
+  <li><span class="check">✓</span> Chatbot WhatsApp 24/7</li>
+  <li><span class="check">✓</span> Respuestas FAQs ilimitadas</li>
+  <li><span class="check">✓</span> Atención multilingüe (6 idiomas)</li>
+  <li><span class="check">✓</span> Tono y estilo personalizado para tu hotel</li>
+  <li><span class="cross">–</span> Sin reservas automáticas</li>
+  <li><span class="cross">–</span> Sin integración con PMS</li>
+  </ul>
+  <a href="#contacto" class="plan-cta plan-cta-primary">Activar ahora</a>
+  </div>
+
+ <div class="plan-card reveal reveal-delay-3">
+ <div class="plan-label">Completo</div>
+ <div class="plan-name">Partner Hostara</div>
+ <p class="plan-desc">Transformación digital completa para tu hotel.</p>
+ <div class="plan-price">149€</div>
+ <div class="plan-price-label">/mes · todo incluido</div>
+ <hr class="plan-divider">
+ <ul class="plan-features">
+  <li><span class="check">✓</span> Todo lo de Booking Agent</li>
+  <li><span class="check">✓</span> Reservas automáticas</li>
+  <li><span class="check">✓</span> Check-in automático</li>
+  <li><span class="check">✓</span> Soporte prioritario 24h</li>
+ </ul>
+ <a href="#contacto" class="plan-cta plan-cta-ghost">Hablar con un experto</a>
+ </div>
+ </div>
+ </div>
+</section>
+
+<!-- CTA FINAL -->
+<section id="cta-final">
+ <div class="cta-glow"></div>
+ <div class="container">
+ <div class="reveal">
+ <div class="cta-urgency">
+ <div class="dot"></div>
+ <span>Hoteles de Toledo están perdiendo reservas ahora mismo</span>
+ </div>
+
+ <h2 class="display display-xl cta-headline">
+ Automatiza tu hotel hoy.<br>
+ <span style="color:var(--gold-bright);font-style:italic">Empieza antes que tu competencia.</span>
+ </h2>
+
+ <p class="cta-sub">
+ La IA ya está vendiendo hoteles en Toledo. Cada día que esperas es un día más de reservas perdidas, turistas que no responden y comisiones pagadas a Booking.
+ </p>
+
+ <div class="cta-btns">
+ <a href="#contacto" class="btn-primary" style="font-size:0.8rem;padding:1.125rem 2.5rem">
+ ▶ Quiero automatizar mi hotel
+ </a>
+ <a href="https://wa.me/34663799362?text=Hola%20Hostara%2C%20quiero%20una%20demo%20para%20mi%20hotel%20en%20Toledo" target="_blank" class="btn-ghost" style="color:var(--green);border-color:rgba(37,211,102,0.3)">
+ WhatsApp directo
+ </a>
+ </div>
+
+ <p class="cta-note">Sin permanencia · Tu IA lista en pocos días · Auditoría gratis sin compromiso</p>
+ </div>
+ </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contacto">
+ <div class="container">
+ <div class="contact-grid">
+ <div class="reveal">
+ <div class="section-label"><span>Contacto</span></div>
+ <h2 class="display display-md" style="margin-bottom:2rem">Eleva tu hotel.<br>Hablemos hoy.</h2>
+ <p style="color:var(--text-dim);line-height:1.8;margin-bottom:3rem;max-width:28rem;font-size:0.9375rem">
+ Una llamada de 20 minutos es suficiente para entender tu situación y mostrarte exactamente cuánto puede crecer tu hotel con Hostara.
+ </p>
+
+ <div class="contact-info-block">
+ <div class="contact-info-label">Canal directo</div>
+ <div class="contact-info-val">663 799 362</div>
+ </div>
+ <div class="contact-info-block">
+ <div class="contact-info-label">Email</div>
+  <div class="contact-info-val">ikermunozherrero@gmail.com</div>
+ </div>
+ <div class="contact-info-block">
+ <div class="contact-info-label">Respuesta garantizada</div>
+ <div class="contact-info-val" style="font-size:0.875rem;color:var(--text-dim)">En menos de 2 horas en horario laboral</div>
+ </div>
+
+ <div style="display:flex;flex-wrap:wrap;gap:0.75rem;margin-top:1rem">
+ <span style="background:rgba(200,169,110,0.08);border:1px solid var(--border-gold);padding:0.35rem 0.875rem;font-size:0.688rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase">n8n</span>
+ <span style="background:rgba(200,169,110,0.08);border:1px solid var(--border-gold);padding:0.35rem 0.875rem;font-size:0.688rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase">Gemini AI</span>
+ <span style="background:rgba(200,169,110,0.08);border:1px solid var(--border-gold);padding:0.35rem 0.875rem;font-size:0.688rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase">WhatsApp API</span>
+ <span style="background:rgba(200,169,110,0.08);border:1px solid var(--border-gold);padding:0.35rem 0.875rem;font-size:0.688rem;color:var(--gold);letter-spacing:0.1em;text-transform:uppercase">PMS Integration</span>
+ </div>
+ </div>
+
+ <div class="reveal reveal-delay-2" style="background:var(--bg3);border:1px solid var(--border);padding:3rem;position:relative;">
+ <div style="position:absolute;top:0;left:0;width:40px;height:40px;border-top:1px solid var(--gold);border-left:1px solid var(--gold)"></div>
+ <div style="position:absolute;bottom:0;right:0;width:40px;height:40px;border-bottom:1px solid var(--gold);border-right:1px solid var(--gold)"></div>
+ <h3 style="font-family:var(--font-display);font-size:1.5rem;font-weight:600;margin-bottom:2rem">Solicita tu auditoría gratuita</h3>
+ <form class="contact-form" action="https://formspree.io/f/ikermunozherrero@gmail.com" method="POST">
+ <div class="form-row">
+ <div class="form-group">
+ <label class="form-label">Nombre</label>
+ <input class="form-input" type="text" name="name" required placeholder="Tu nombre">
+ </div>
+ <div class="form-group">
+ <label class="form-label">Hotel</label>
+ <input class="form-input" type="text" name="hotel" required placeholder="Nombre del hotel">
+ </div>
+ </div>
+ <div class="form-group">
+ <label class="form-label">Email</label>
+ <input class="form-input" type="email" name="email" required placeholder="email@tuhotel.com">
+ </div>
+ <div class="form-group">
+ <label class="form-label">Teléfono</label>
+ <input class="form-input" type="tel" name="phone" placeholder="+34 600 000 000">
+ </div>
+ <div class="form-group">
+ <label class="form-label">¿Qué te interesa?</label>
+ <select class="form-input" name="interest">
+ <option value="booking">Chatbot WhatsApp + Reservas automáticas</option>
+ <option value="full">Transformación digital completa</option>
+ <option value="demo">Solo quiero ver una demo</option>
+ <option value="audit">Auditoría gratuita primero</option>
+ </select>
+ </div>
+ <button type="submit" class="form-submit">Enviar solicitud →</button>
+ </form>
+ </div>
+ </div>
+ </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+ <div class="container">
+ <div class="footer-inner">
+ <div class="footer-logo">Hostara</div>
+ <p class="footer-copy">© 2025 Hostara · Automatización Hotelera · Toledo, España</p>
+ <div class="footer-links">
+ <a href="#">Legal</a>
+ <a href="#">Privacidad</a>
+ <a href="https://linkedin.com" target="_blank">LinkedIn</a>
+ </div>
+ </div>
+ </div>
+</footer>
+
+<!-- WA FLOAT -->
+<a href="https://wa.me/34663799362?text=Hola%20Hostara%2C%20me%20interesa%20automatizar%20mi%20hotel%20en%20Toledo" target="_blank" class="wa-float" title="WhatsApp directo">
+ <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+ <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+ </svg>
+</a>
+
+<script>
+// ── NAV SCROLL ──
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+ navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ── MOBILE MENU ──
+function openMobileMenu() {
+ document.getElementById('mobileMenu').classList.add('open');
+}
+function closeMobileMenu() {
+ document.getElementById('mobileMenu').classList.remove('open');
+}
+
+// ── SMOOTH SCROLL ──
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+ a.addEventListener('click', e => {
+ const target = document.querySelector(a.getAttribute('href'));
+ if (target) {
+ e.preventDefault();
+ target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+ }
+ });
+});
+
+// ── SCROLL REVEAL ──
+const revealObserver = new IntersectionObserver((entries) => {
+ entries.forEach(entry => {
+ if (entry.isIntersecting) {
+ entry.target.classList.add('active');
+ }
+ });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// ── COUNT UP ANIMATION ──
+function animateCounter(el) {
+ const target = parseFloat(el.dataset.target);
+ const decimals = parseInt(el.dataset.decimals || '0');
+ const prefix = el.dataset.prefix || '';
+ const suffix = el.dataset.suffix || '';
+ const duration = 2000;
+ const start = performance.now();
+
+ function update(now) {
+ const elapsed = now - start;
+ const progress = Math.min(elapsed / duration, 1);
+ const eased = 1 - Math.pow(1 - progress, 3);
+ const current = target * eased;
+ el.textContent = prefix + current.toFixed(decimals) + suffix;
+ if (progress < 1) requestAnimationFrame(update);
+ }
+ requestAnimationFrame(update);
+}
+
+const counterObserver = new IntersectionObserver((entries) => {
+ entries.forEach(entry => {
+ if (entry.isIntersecting && !entry.target.dataset.counted) {
+ entry.target.dataset.counted = '1';
+ animateCounter(entry.target);
+ }
+ });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.count-up').forEach(el => counterObserver.observe(el));
+
+// ── HERO WA CHAT ANIMATION ──
+function animateHeroChat() {
+ const show = (id, delay) => setTimeout(() => {
+ const el = document.getElementById(id);
+ if (el) el.classList.add('show');
+ }, delay);
+
+ show('hm1', 600);
+ show('ht1', 1200);
+ setTimeout(() => {
+ const t = document.getElementById('ht1');
+ if (t) t.classList.remove('show');
+ }, 2400);
+ show('hm2', 2500);
+ show('hm3', 4000);
+ show('ht2', 4600);
+ setTimeout(() => {
+ const t = document.getElementById('ht2');
+ if (t) t.classList.remove('show');
+ }, 5800);
+ show('hm4', 5900);
+
+ // Loop after 12s
+ setTimeout(animateHeroChat, 12000);
+}
+
+// ── PHONE CHAT ANIMATION ──
+function animatePhoneChat() {
+ const ids = ['pm1','pt1','pm2','pm3','pt2','pm4'];
+ ids.forEach(id => {
+ const el = document.getElementById(id);
+ if (el) el.classList.remove('show');
+ });
+
+ const show = (id, delay) => setTimeout(() => {
+ const el = document.getElementById(id);
+ if (el) el.classList.add('show');
+ }, delay);
+
+ show('pm1', 400);
+ show('pt1', 900);
+ setTimeout(() => {
+ const t = document.getElementById('pt1');
+ if (t) t.classList.remove('show');
+ }, 2100);
+ show('pm2', 2200);
+ show('pm3', 3600);
+ show('pt2', 4200);
+ setTimeout(() => {
+ const t = document.getElementById('pt2');
+ if (t) t.classList.remove('show');
+ }, 5400);
+ show('pm4', 5500);
+
+ setTimeout(animatePhoneChat, 12000);
+}
+
+// Start animations
+setTimeout(animateHeroChat, 800);
+
+const phoneObserver = new IntersectionObserver((entries) => {
+ entries.forEach(entry => {
+ if (entry.isIntersecting && !entry.target.dataset.animated) {
+ entry.target.dataset.animated = '1';
+ animatePhoneChat();
+ }
+ });
+}, { threshold: 0.3 });
+
+const phoneChat = document.getElementById('phoneChat');
+if (phoneChat) phoneObserver.observe(phoneChat.closest('.phone-mockup') || phoneChat);
+
+// ── PARALLAX HERO ──
+window.addEventListener('scroll', () => {
+ const y = window.scrollY;
+ const grid = document.querySelector('.hero-grid');
+ if (grid) grid.style.transform = `translateY(${y * 0.15}px)`;
+});
+</script>
+</body>
+</html>
